@@ -1,17 +1,20 @@
+import mediapipe as mp
+import math
+import cv2 # opencv-python
 import os
-import cv2 # pip install opencv-python
-import mediapipe as mp # pip install mediapipe
 
 
 class DeteccaoVisual:
-    # Rec's
+    # Reconhecimentos e exibição
     #------------------------------
     RECONHECIMENTO_HANDS = mp.solutions.hands
     HAND = RECONHECIMENTO_HANDS.Hands()
+    #------------------------------
     DESENHO_MP = mp.solutions.drawing_utils
     #------------------------------
     
-    def __init__(self):
+    def __init__(self, exibir_webcam:bool=True):
+        self.exibir_webcam = exibir_webcam
         self.webcam = cv2.VideoCapture(0)
         self.frameBGR:object = None
         self.frameRGB:object = None
@@ -29,7 +32,7 @@ class DeteccaoVisual:
             while obj_validador:
                 obj_validador, self.frameBGR = self.webcam.read()
                 
-                # Tratar os frames de BGR para RGB e identificar as mãos.
+                # Tratativa de frames de BGR para RGB e identificação das mãos.
                 #------------------------------------------------------------
                 self.frameRGB = cv2.cvtColor(self.frameBGR, cv2.COLOR_BGR2RGB)
                 lista_ObjMaos = DeteccaoVisual.HAND.process(self.frameRGB) 
@@ -50,8 +53,8 @@ class DeteccaoVisual:
                         
                         DeteccaoVisual.DESENHO_MP.draw_landmarks(self.frameBGR, obj_Mao, DeteccaoVisual.RECONHECIMENTO_HANDS.HAND_CONNECTIONS)
 
-                # Mostrar frames da webcam
-                cv2.imshow('Webcam - Detecção Visual', self.frameBGR)
+                if self.exibir_webcam:
+                    cv2.imshow('Webcam - Deteccao Visual', self.frameBGR)
                                 
                 # Tempo de espera entre os frames e detecção de tecla de encerramento
                 #--------------------
@@ -61,8 +64,8 @@ class DeteccaoVisual:
                 #--------------------
 
 
+
 class DeterminarGestos:
-    
     
     def __init__(self, PDP, PDI, PDM, PDA, PDMI) -> None:
         # Eixos -> {x:y}
@@ -74,7 +77,7 @@ class DeterminarGestos:
         self.eixo_ponta_mindinho:dict = self._tratar_obj_landmark(PDMI)
         #----------------------------------------------------------------------
         
-        # X e Y dos Eixos
+        # Unpacking de X e Y dos Eixos
         #----------------------------------------------------------------------
         self.X_ponta_polegar, self.Y_ponta_polegar = self.eixo_ponta_polegar.values()
         self.X_ponta_indicador, self.Y_ponta_indicador = self.eixo_ponta_indicador.values()
@@ -98,21 +101,24 @@ class DeterminarGestos:
             ((self.Y_ponta_indicador - self.Y_ponta_polegar) > -0.05) and ((self.Y_ponta_indicador - self.Y_ponta_polegar) < -0.007) : 'Pinça',
             False : 'V',
             }
-        
-        print(self.Y_ponta_medio - self.Y_ponta_indicador)
         #------------------------------
         
+        # Testes para Cálculo
         print(f'Polegar: {self.eixo_ponta_polegar}\n',
               f'Indicador: {self.eixo_ponta_indicador}\n',
               f'Médio: {self.eixo_ponta_medio}\n',
               f'Anelar: {self.eixo_ponta_anelar}\n',
               f'Mindinho: {self.eixo_ponta_mindinho}\n')
-    
         
+
+        print(math.sqrt((self.Y_ponta_indicador**2)+(self.Y_ponta_polegar**2)))
+        print(math.sqrt((self.X_ponta_indicador - self.X_ponta_polegar)**2 + (self.Y_ponta_indicador - self.Y_ponta_polegar)**2))
+
+    
     def _tratar_obj_landmark(self, obj):
         obj_tratado = str(obj).split('\n')
         obj_tratado = [obj_eixo.split(': ') for obj_eixo in obj_tratado][:2]
-        return {k:float(f'{float(v):.2f}') for k,v in obj_tratado}
+        return {k:float(f'{float(v):.5f}') for k,v in obj_tratado}
     
     
     def identificar(self):
@@ -122,13 +128,13 @@ class DeterminarGestos:
         print(retorno_objeto_booleano_detectado)
         
         if retorno_objeto_booleano_detectado:
-            self.delimitar_gesto_funcao.get(retorno_objeto_booleano_detectado[0])
-
-
+            print(self.delimitar_gesto_funcao.get(retorno_objeto_booleano_detectado[0]))
+            # eval(self.delimitar_gesto_funcao.get(retorno_objeto_booleano_detectado[0]))
+            
+            
 if __name__ == "__main__":
-    
     def abrir_explorador_de_arquivos():
         os.system('start explorer')
     
-    app = DeteccaoVisual()
+    app = DeteccaoVisual(exibir_webcam=True)
     app.run()
