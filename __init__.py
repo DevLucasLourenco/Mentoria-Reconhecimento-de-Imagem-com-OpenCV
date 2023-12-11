@@ -90,29 +90,30 @@ class DeterminarGestos:
         #------------------------------
         self.delimitar_gesto_funcao:dict = {
             'Pinça' : 'função pinça',
+            'L' : 'função L',
             'V' : 'função V',
             'II' : 'função II',
-            'L' : 'função L',
             }
         
         #-----
         
         self.logica_deteccao_movimento:dict = {
-            ((self.Y_ponta_indicador - self.Y_ponta_polegar) > -0.05) and ((self.Y_ponta_indicador - self.Y_ponta_polegar) < -0.007) : 'Pinça',
+            ((self.Y_ponta_indicador - self.Y_ponta_polegar) > -0.05) and ((self.Y_ponta_indicador - self.Y_ponta_polegar) < -0.007) and ((self.Y_ponta_medio*1.50) < self.Y_ponta_indicador) : 'Pinça',
             False : 'V',
             }
         #------------------------------
         
         # Testes para Cálculo
+        #------------------------------
         print(f'Polegar: {self.eixo_ponta_polegar}\n',
               f'Indicador: {self.eixo_ponta_indicador}\n',
               f'Médio: {self.eixo_ponta_medio}\n',
               f'Anelar: {self.eixo_ponta_anelar}\n',
               f'Mindinho: {self.eixo_ponta_mindinho}\n')
-        
+
 
         print(math.sqrt((self.Y_ponta_indicador**2)+(self.Y_ponta_polegar**2)))
-        print(math.sqrt((self.X_ponta_indicador - self.X_ponta_polegar)**2 + (self.Y_ponta_indicador - self.Y_ponta_polegar)**2))
+        #------------------------------
 
     
     def _tratar_obj_landmark(self, obj):
