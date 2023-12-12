@@ -74,6 +74,7 @@ class DeteccaoVisual:
 class DeterminarGestos:
     
     def __init__(self,IDP, IDI, IDM, PDP, PDI, PDM, PDA, PDMI) -> None:
+        self.GESTOS = Gestos()
         # Eixos -> {x:y}
         #----------------------------------------------------------------------
         self.eixo_inicio_polegar:dict = self._tratar_obj_landmark(IDP)
@@ -116,7 +117,7 @@ class DeterminarGestos:
         #-----
         
         self.logica_deteccao_movimento:dict = {
-            ((self.Y_ponta_indicador - self.Y_ponta_polegar) > -0.05) and ((self.Y_ponta_indicador - self.Y_ponta_polegar) < -0.007) and ((self.Y_ponta_medio*1.50) < self.Y_ponta_indicador) : 'Pinça',
+           self.GESTOS.Pinca(self) : 'Pinça',
             (False) : 'L',
             }
         #------------------------------
@@ -133,11 +134,13 @@ class DeterminarGestos:
               f'Minimo - Ponta: {self.eixo_ponta_minimo}\n')
 
 
+        print('calc polegar', self.X_ponta_polegar - self.Y_ponta_polegar) #?
         print('Inicio e Fim polegar: ', (self.X_ponta_polegar - self.X_inicio_polegar), ((self.X_ponta_polegar - self.X_inicio_polegar)  <= 0.2) and ((self.X_ponta_polegar - self.X_inicio_polegar) >= 0.125))
-        print('Hipotenusa: ',math.sqrt((self.Y_ponta_indicador**2)+(self.Y_ponta_polegar**2)))
+        print('Hipotenusa: ', math.sqrt((self.Y_ponta_indicador**2)+(self.Y_ponta_polegar**2)))
         #------------------------------
-
+        
     
+       
     def _tratar_obj_landmark(self, obj):
         obj_tratado = str(obj).split('\n')
         obj_tratado = [obj_eixo.split(': ') for obj_eixo in obj_tratado][:2]
@@ -153,6 +156,26 @@ class DeterminarGestos:
         if retorno_objeto_booleano_detectado:
             eval(self.delimitar_gesto_funcao.get(retorno_objeto_booleano_detectado[0]))
             
+            
+            
+            
+            
+class Gestos:
+    
+        def Pinca(self, objeto_self_classe):
+            diferenca_eixoY_PDP = (objeto_self_classe.Y_ponta_indicador - objeto_self_classe.Y_ponta_polegar)
+            if (diferenca_eixoY_PDP > -0.05) and (diferenca_eixoY_PDP < -0.007) and ((objeto_self_classe.Y_ponta_medio*1.50) < objeto_self_classe.Y_ponta_indicador):
+                return True
+            
+        def V(self, objeto_self_classe):
+            ...
+        
+        def L(self, objeto_self_classe):
+            ...
+        
+        def II(self, objeto_self_classe):
+            #polegar abaixo do dedo indicador
+            ...
             
 if __name__ == "__main__":
     def abrir_explorador_de_arquivos():
