@@ -163,8 +163,18 @@ class DeterminarGestos:
 class Gestos:
     
         def Pinca(self, objeto_self_classe):
+            #----------------------------------------
             diferenca_eixoY_PDP = (objeto_self_classe.Y_ponta_indicador - objeto_self_classe.Y_ponta_polegar)
-            if (diferenca_eixoY_PDP > -0.05) and (diferenca_eixoY_PDP < -0.007) and ((objeto_self_classe.Y_ponta_medio*1.50) < objeto_self_classe.Y_ponta_indicador):
+            #----------------------------------------
+            
+            # Validações de Prosseguimento
+            #----------------------------------------
+            validacao1:bool = (diferenca_eixoY_PDP > -0.05)
+            validacao2:bool = (diferenca_eixoY_PDP < -0.007)
+            validacao3:bool = ((objeto_self_classe.Y_ponta_medio*1.50) < objeto_self_classe.Y_ponta_indicador)
+            #----------------------------------------
+            
+            if validacao1 and validacao2 and validacao3:
                 return True
             
         def V(self, objeto_self_classe):
