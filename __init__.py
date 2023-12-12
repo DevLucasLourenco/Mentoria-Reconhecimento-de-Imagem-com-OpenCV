@@ -45,14 +45,16 @@ class DeteccaoVisual:
                         inicio_dedo_polegar = obj_Mao.landmark[1]
                         inicio_dedo_indicador = obj_Mao.landmark[5]
                         inicio_dedo_medio = obj_Mao.landmark[9]
+                        # inicio_dedo_anelar = obj_Mao.landmark[x] 14?
+                        # inicio_dedo_minimo = obj_Mao.landmark[x] 19?
                         
                         ponta_dedo_polegar = obj_Mao.landmark[4]
                         ponta_dedo_indicador = obj_Mao.landmark[8]
                         ponta_dedo_medio = obj_Mao.landmark[12]
                         ponta_dedo_anelar = obj_Mao.landmark[16]
-                        ponta_dedo_mindinho = obj_Mao.landmark[20]
+                        ponta_dedo_minimo = obj_Mao.landmark[20]
                         
-                        deteccao_gesto = DeterminarGestos(IDP=inicio_dedo_polegar, IDI=inicio_dedo_indicador, IDM=inicio_dedo_medio, PDP=ponta_dedo_polegar, PDI=ponta_dedo_indicador, PDM=ponta_dedo_medio, PDA=ponta_dedo_anelar, PDMI=ponta_dedo_mindinho)
+                        deteccao_gesto = DeterminarGestos(IDP=inicio_dedo_polegar, IDI=inicio_dedo_indicador, IDM=inicio_dedo_medio, PDP=ponta_dedo_polegar, PDI=ponta_dedo_indicador, PDM=ponta_dedo_medio, PDA=ponta_dedo_anelar, PDMI=ponta_dedo_minimo)
                         deteccao_gesto.identificar()
                         
                         DeteccaoVisual.DESENHO_MP.draw_landmarks(self.frameBGR, obj_Mao, DeteccaoVisual.RECONHECIMENTO_HANDS.HAND_CONNECTIONS)
@@ -84,7 +86,7 @@ class DeterminarGestos:
         self.eixo_ponta_indicador:dict = self._tratar_obj_landmark(PDI)
         self.eixo_ponta_medio:dict = self._tratar_obj_landmark(PDM)
         self.eixo_ponta_anelar:dict = self._tratar_obj_landmark(PDA)
-        self.eixo_ponta_mindinho:dict = self._tratar_obj_landmark(PDMI)
+        self.eixo_ponta_minimo:dict = self._tratar_obj_landmark(PDMI)
         #----------------------------------------------------------------------
         
         # Unpacking de X e Y dos Eixos
@@ -99,13 +101,13 @@ class DeterminarGestos:
         self.X_ponta_indicador, self.Y_ponta_indicador = self.eixo_ponta_indicador.values()
         self.X_ponta_medio, self.Y_ponta_medio = self.eixo_ponta_medio.values()
         self.X_ponta_anelar, self.Y_ponta_anelar = self.eixo_ponta_anelar.values()
-        self.X_ponta_mindinho, self.Y_ponta_mindinho = self.eixo_ponta_mindinho.values()
+        self.X_ponta_minimo, self.Y_ponta_minimo = self.eixo_ponta_minimo.values()
         #----------------------------------------------------------------------
         
         # Dict's Auxiliares
         #------------------------------
         self.delimitar_gesto_funcao:dict = {
-            'Pinça' : 'print("Pinça")',
+            'Pinça' : 'print("Retorno de Pinça")',
             'L' : 'função L',
             'V' : 'função V',
             'II' : 'função II',
@@ -121,15 +123,18 @@ class DeterminarGestos:
         
         # Cálculo para Testes 
         #------------------------------
+        
+        print(type(self.eixo_inicio_indicador))
+        print(type(self.X_inicio_indicador))
         print(f'Polegar - Ponta: {self.eixo_ponta_polegar} - Inicio: {self.eixo_inicio_polegar} \n',
               f'Indicador - Ponta: {self.eixo_ponta_indicador} - Inicio: {self.eixo_inicio_indicador} \n',
               f'Médio - Ponta: {self.eixo_ponta_medio} - Inicio: {self.eixo_inicio_medio} \n',
               f'Anelar - Ponta: {self.eixo_ponta_anelar}\n',
-              f'Mindinho - Ponta: {self.eixo_ponta_mindinho}\n')
+              f'Minimo - Ponta: {self.eixo_ponta_minimo}\n')
 
 
-        print('inicio e fim polegar: ', (self.X_ponta_polegar - self.X_inicio_polegar), ((self.X_ponta_polegar - self.X_inicio_polegar)  <= 0.2) and ((self.X_ponta_polegar - self.X_inicio_polegar) >= 0.125))
-        print('hipotenusa: ',math.sqrt((self.Y_ponta_indicador**2)+(self.Y_ponta_polegar**2)))
+        print('Inicio e Fim polegar: ', (self.X_ponta_polegar - self.X_inicio_polegar), ((self.X_ponta_polegar - self.X_inicio_polegar)  <= 0.2) and ((self.X_ponta_polegar - self.X_inicio_polegar) >= 0.125))
+        print('Hipotenusa: ',math.sqrt((self.Y_ponta_indicador**2)+(self.Y_ponta_polegar**2)))
         #------------------------------
 
     
