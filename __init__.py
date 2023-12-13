@@ -195,7 +195,7 @@ class Gestos:
             validacao_reta_polegar = (((dif_reta_polegar)  <= 0.2) or ((dif_reta_polegar)  <= -0.2)) and (((dif_reta_polegar) >= 0.125) or (dif_reta_polegar) <= -0.125)
             validacao_delimitacao_hipotenusa = (hipotenusa >= 0.4) and (hipotenusa <= 0.73)
             
-            #criar validação da proximidade dos dedos indicadores e médio
+            # Criar validação da proximidade dos dedos indicadores e médio
             
             # Criar validação de o dedo médio e o dedo mínimo estarem abaixados
             
