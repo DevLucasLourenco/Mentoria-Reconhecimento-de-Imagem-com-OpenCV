@@ -45,8 +45,8 @@ class DeteccaoVisual:
                         inicio_dedo_polegar = obj_Mao.landmark[1]
                         inicio_dedo_indicador = obj_Mao.landmark[5]
                         inicio_dedo_medio = obj_Mao.landmark[9]
-                        # inicio_dedo_anelar = obj_Mao.landmark[x] 14?
-                        # inicio_dedo_minimo = obj_Mao.landmark[x] 19?
+                        inicio_dedo_anelar = obj_Mao.landmark[13]
+                        inicio_dedo_minimo = obj_Mao.landmark[17]
                         
                         ponta_dedo_polegar = obj_Mao.landmark[4]
                         ponta_dedo_indicador = obj_Mao.landmark[8]
@@ -54,7 +54,10 @@ class DeteccaoVisual:
                         ponta_dedo_anelar = obj_Mao.landmark[16]
                         ponta_dedo_minimo = obj_Mao.landmark[20]
                         
-                        deteccao_gesto = DeterminarGestos(IDP=inicio_dedo_polegar, IDI=inicio_dedo_indicador, IDM=inicio_dedo_medio, PDP=ponta_dedo_polegar, PDI=ponta_dedo_indicador, PDM=ponta_dedo_medio, PDA=ponta_dedo_anelar, PDMI=ponta_dedo_minimo)
+                        deteccao_gesto = DeterminarGestos(IDP=inicio_dedo_polegar, IDI=inicio_dedo_indicador, IDM=inicio_dedo_medio,
+                                                          IDA=inicio_dedo_anelar, IDMI=inicio_dedo_minimo, PDP=ponta_dedo_polegar, 
+                                                          PDI=ponta_dedo_indicador, PDM=ponta_dedo_medio, PDA=ponta_dedo_anelar, 
+                                                          PDMI=ponta_dedo_minimo)
                         deteccao_gesto.identificar()
                         
                         DeteccaoVisual.DESENHO_MP.draw_landmarks(self.frameBGR, obj_Mao, DeteccaoVisual.RECONHECIMENTO_HANDS.HAND_CONNECTIONS)
@@ -73,13 +76,14 @@ class DeteccaoVisual:
 
 class DeterminarGestos:
     
-    def __init__(self,IDP, IDI, IDM, PDP, PDI, PDM, PDA, PDMI) -> None:
-        self.GESTOS = Gestos()
+    def __init__(self,IDP, IDI, IDM, IDA, IDMI, PDP, PDI, PDM, PDA, PDMI) -> None:        
         # Eixos -> {x:y}
         #----------------------------------------------------------------------
         self.eixo_inicio_polegar:dict = self._tratar_obj_landmark(IDP)
         self.eixo_inicio_indicador:dict = self._tratar_obj_landmark(IDI)
         self.eixo_inicio_medio:dict = self._tratar_obj_landmark(IDM)
+        self.eixo_inicio_anelar:dict = self._tratar_obj_landmark(IDA)
+        self.eixo_inicio_minimo:dict = self._tratar_obj_landmark(IDMI)
         
         #-----
 
@@ -95,6 +99,8 @@ class DeterminarGestos:
         self.X_inicio_polegar, self.Y_inicio_polegar = self.eixo_inicio_polegar.values()
         self.X_inicio_indicador, self.Y_inicio_indicador = self.eixo_inicio_indicador.values()
         self.X_inicio_medio, self.Y_inicio_medio = self.eixo_inicio_medio.values()
+        self.X_inicio_anelar, self.Y_inicio_anelar = self.eixo_inicio_anelar.values()
+        self.X_inicio_minimo, self.Y_inicio_minimo = self.eixo_inicio_minimo.values()
         
         #-----
         
@@ -109,7 +115,7 @@ class DeterminarGestos:
         #------------------------------
         self.delimitar_gesto_funcao:dict = {
             'Pinça' : 'print("Retorno de Pinça")',
-            'L' : 'função L',
+            'L' : 'print("Retorno de L")',
             'V' : 'função V',
             'II' : 'função II',
             }
@@ -117,8 +123,8 @@ class DeterminarGestos:
         #-----
         
         self.logica_deteccao_movimento:dict = {
-           self.GESTOS.Pinca(self) : 'Pinça',
-            (False) : 'L',
+            Gestos.Pinca(self) : 'Pinça',
+            Gestos.L(self) : 'L',
             }
         #------------------------------
         
@@ -127,24 +133,26 @@ class DeterminarGestos:
         
         print(type(self.eixo_inicio_indicador))
         print(type(self.X_inicio_indicador))
-        print(f'Polegar - Ponta: {self.eixo_ponta_polegar} - Inicio: {self.eixo_inicio_polegar} \n',
-              f'Indicador - Ponta: {self.eixo_ponta_indicador} - Inicio: {self.eixo_inicio_indicador} \n',
-              f'Médio - Ponta: {self.eixo_ponta_medio} - Inicio: {self.eixo_inicio_medio} \n',
-              f'Anelar - Ponta: {self.eixo_ponta_anelar}\n',
-              f'Minimo - Ponta: {self.eixo_ponta_minimo}\n')
+        print(f'Polegar - Inicio: {self.eixo_inicio_polegar} - Ponta: {self.eixo_ponta_polegar}\n',
+              f'Indicador - Inicio: {self.eixo_inicio_indicador} - Ponta: {self.eixo_ponta_indicador}\n',
+              f'Médio - Inicio: {self.eixo_inicio_medio} - Ponta: {self.eixo_ponta_medio}\n',
+              f'Anelar - Inicio: {self.eixo_inicio_anelar} - Ponta: {self.eixo_ponta_anelar}\n',
+              f'Minimo - Inicio: {self.eixo_inicio_minimo} - Ponta: {self.eixo_ponta_minimo}\n',
+        )
 
 
-        print('calc polegar', self.X_ponta_polegar - self.Y_ponta_polegar) #?
-        print('Inicio e Fim polegar: ', (self.X_ponta_polegar - self.X_inicio_polegar), ((self.X_ponta_polegar - self.X_inicio_polegar)  <= 0.2) and ((self.X_ponta_polegar - self.X_inicio_polegar) >= 0.125))
-        print('Hipotenusa: ', math.sqrt((self.Y_ponta_indicador**2)+(self.Y_ponta_polegar**2)))
+        
+        print('Reta do polegar: ', (self.X_ponta_polegar - self.X_inicio_polegar), (((self.X_ponta_polegar - self.X_inicio_polegar)  <= 0.2) or ((self.X_ponta_polegar - self.X_inicio_polegar)  <= -0.2)) and (((self.X_ponta_polegar - self.X_inicio_polegar) >= 0.125) or (self.X_ponta_polegar - self.X_inicio_polegar) <= -0.125))
+        hipotenusa = math.sqrt((self.Y_ponta_indicador**2)+(self.X_ponta_polegar**2))
+        print('Hipotenusa: ', hipotenusa, (hipotenusa >= 0.4) and (hipotenusa <= 0.73))
         #------------------------------
         
-    
-       
+
+
     def _tratar_obj_landmark(self, obj):
         obj_tratado = str(obj).split('\n')
         obj_tratado = [obj_eixo.split(': ') for obj_eixo in obj_tratado][:2]
-        return {k:float(f'{float(v):.5f}') for k,v in obj_tratado}
+        return {k:float(v) for k,v in obj_tratado}
     
     
     def identificar(self):
@@ -154,15 +162,13 @@ class DeterminarGestos:
         print(retorno_objeto_booleano_detectado)
         
         if retorno_objeto_booleano_detectado:
-            eval(self.delimitar_gesto_funcao.get(retorno_objeto_booleano_detectado[0]))
-            
-            
-            
+            eval(self.delimitar_gesto_funcao.get(retorno_objeto_booleano_detectado[0]))          
+
             
             
 class Gestos:
     
-        def Pinca(self, objeto_self_classe):
+        def Pinca(objeto_self_classe):
             #----------------------------------------
             diferenca_eixoY_PDP = (objeto_self_classe.Y_ponta_indicador - objeto_self_classe.Y_ponta_polegar)
             #----------------------------------------
@@ -171,19 +177,38 @@ class Gestos:
             #----------------------------------------
             validacao1:bool = (diferenca_eixoY_PDP > -0.05)
             validacao2:bool = (diferenca_eixoY_PDP < -0.007)
-            validacao3:bool = ((objeto_self_classe.Y_ponta_medio*1.50) < objeto_self_classe.Y_ponta_indicador)
+            validacao3:bool = ((objeto_self_classe.Y_ponta_medio*1.30) < objeto_self_classe.Y_ponta_indicador)
             #----------------------------------------
             
             if validacao1 and validacao2 and validacao3:
                 return True
+
             
-        def V(self, objeto_self_classe):
+        def L(objeto_self_classe):
+            #----------------------------------------
+            hipotenusa = math.sqrt((objeto_self_classe.Y_ponta_indicador**2)+(objeto_self_classe.X_ponta_polegar**2))
+            dif_reta_polegar = (objeto_self_classe.X_ponta_polegar - objeto_self_classe.X_inicio_polegar)
+            #----------------------------------------
+            
+            # Validações de Prosseguimento
+            #----------------------------------------
+            validacao_reta_polegar = (((dif_reta_polegar)  <= 0.2) or ((dif_reta_polegar)  <= -0.2)) and (((dif_reta_polegar) >= 0.125) or (dif_reta_polegar) <= -0.125)
+            validacao_delimitacao_hipotenusa = (hipotenusa >= 0.4) and (hipotenusa <= 0.73)
+            
+            #criar validação da proximidade dos dedos indicadores e médio
+            
+            # Criar validação de o dedo médio e o dedo mínimo estarem abaixados
+            
+            #----------------------------------------
+            
+            if validacao_reta_polegar and validacao_delimitacao_hipotenusa:
+                return True
+        
+            
+        def V(objeto_self_classe):
             ...
         
-        def L(self, objeto_self_classe):
-            ...
-        
-        def II(self, objeto_self_classe):
+        def II(objeto_self_classe):
             #polegar abaixo do dedo indicador
             ...
             
