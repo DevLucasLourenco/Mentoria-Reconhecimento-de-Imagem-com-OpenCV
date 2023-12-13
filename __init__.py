@@ -196,7 +196,6 @@ class Gestos:
             validacao_reta_polegar = (((dif_reta_polegar)  <= 0.2) or ((dif_reta_polegar)  <= -0.2)) and (((dif_reta_polegar) >= 0.125) or (dif_reta_polegar) <= -0.125)
             validacao_delimitacao_hipotenusa = (hipotenusa >= 0.4) and (hipotenusa <= 0.73)
             validacao_proximidade_inicio_indicador_medio = ((dif_proximidade_inicio_indicador_medio >= 0.015) and (dif_proximidade_inicio_indicador_medio <= 0.023)) or ((((dif_proximidade_inicio_indicador_medio <= 0.015) and (dif_proximidade_inicio_indicador_medio >= 0)) and ((dif_proximidade_inicio_indicador_medio >= -0.023) and (dif_proximidade_inicio_indicador_medio <= 0 ))))
-            # validacao_proximidade_inicio_indicador_medio_mao_esquerda = (((dif_proximidade_inicio_indicador_medio <= 0.015) and (dif_proximidade_inicio_indicador_medio >= 0)) and ((dif_proximidade_inicio_indicador_medio >= -0.023) and (dif_proximidade_inicio_indicador_medio <= 0 )))
             
             # Criar validação da proximidade dos dedos indicadores e médio
             print(validacao_proximidade_inicio_indicador_medio, dif_proximidade_inicio_indicador_medio)
