@@ -188,14 +188,18 @@ class Gestos:
             #----------------------------------------
             hipotenusa = math.sqrt((objeto_self_classe.Y_ponta_indicador**2)+(objeto_self_classe.X_ponta_polegar**2))
             dif_reta_polegar = (objeto_self_classe.X_ponta_polegar - objeto_self_classe.X_inicio_polegar)
+            dif_proximidade_inicio_indicador_medio = (objeto_self_classe.X_ponta_indicador - objeto_self_classe.X_ponta_medio)
             #----------------------------------------
             
             # Validações de Prosseguimento
             #----------------------------------------
             validacao_reta_polegar = (((dif_reta_polegar)  <= 0.2) or ((dif_reta_polegar)  <= -0.2)) and (((dif_reta_polegar) >= 0.125) or (dif_reta_polegar) <= -0.125)
             validacao_delimitacao_hipotenusa = (hipotenusa >= 0.4) and (hipotenusa <= 0.73)
+            validacao_proximidade_inicio_indicador_medio = ((dif_proximidade_inicio_indicador_medio >= 0.015) and (dif_proximidade_inicio_indicador_medio <= 0.023))
+            # validacao_proximidade_inicio_indicador_medio_mao_esquerda = (((dif_proximidade_inicio_indicador_medio <= 0.015) and (dif_proximidade_inicio_indicador_medio >= 0)) and ((dif_proximidade_inicio_indicador_medio >= -0.023) and (dif_proximidade_inicio_indicador_medio <= 0 )))
             
             # Criar validação da proximidade dos dedos indicadores e médio
+            print(validacao_proximidade_inicio_indicador_medio, dif_proximidade_inicio_indicador_medio)
             
             # Criar validação de o dedo médio e o dedo mínimo estarem abaixados
             
