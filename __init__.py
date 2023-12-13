@@ -1,4 +1,5 @@
 import mediapipe as mp
+import asyncio
 import math
 import cv2 # opencv-python
 import os
@@ -145,8 +146,12 @@ class DeterminarGestos:
         print('Reta do polegar: ', (self.X_ponta_polegar - self.X_inicio_polegar), (((self.X_ponta_polegar - self.X_inicio_polegar)  <= 0.2) or ((self.X_ponta_polegar - self.X_inicio_polegar)  <= -0.2)) and (((self.X_ponta_polegar - self.X_inicio_polegar) >= 0.125) or (self.X_ponta_polegar - self.X_inicio_polegar) <= -0.125))
         hipotenusa = math.sqrt((self.Y_ponta_indicador**2)+(self.X_ponta_polegar**2))
         print('Hipotenusa: ', hipotenusa, (hipotenusa >= 0.4) and (hipotenusa <= 0.73))
+        # distancia entre dois pontos : srqt(ponto1 - ponto2)**2
         #------------------------------
         
+        
+    def aguarde_para_êxito(self):
+        ...
 
 
     def _tratar_obj_landmark(self, obj):
@@ -169,6 +174,7 @@ class DeterminarGestos:
 class Gestos:
     
         def Pinca(objeto_self_classe):
+            # Calculos e Lógicas
             #----------------------------------------
             diferenca_eixoY_PDP = (objeto_self_classe.Y_ponta_indicador - objeto_self_classe.Y_ponta_polegar)
             #----------------------------------------
@@ -185,23 +191,26 @@ class Gestos:
 
             
         def L(objeto_self_classe):
+            # Calculos e Lógicas
             #----------------------------------------
             hipotenusa = math.sqrt((objeto_self_classe.Y_ponta_indicador**2)+(objeto_self_classe.X_ponta_polegar**2))
             dif_reta_polegar = (objeto_self_classe.X_ponta_polegar - objeto_self_classe.X_inicio_polegar)
             dif_proximidade_inicio_indicador_medio = (objeto_self_classe.X_ponta_indicador - objeto_self_classe.X_ponta_medio)
+            logica_calc_mao_direita = ((dif_proximidade_inicio_indicador_medio >= 0.015) and (dif_proximidade_inicio_indicador_medio <= 0.023))
+            logica_calc_mao_esquerda = ((((dif_proximidade_inicio_indicador_medio <= 0.015) and (dif_proximidade_inicio_indicador_medio >= 0)) and ((dif_proximidade_inicio_indicador_medio >= -0.023) and (dif_proximidade_inicio_indicador_medio <= 0 ))))
             #----------------------------------------
             
             # Validações de Prosseguimento
             #----------------------------------------
             validacao_reta_polegar = (((dif_reta_polegar)  <= 0.2) or ((dif_reta_polegar)  <= -0.2)) and (((dif_reta_polegar) >= 0.125) or (dif_reta_polegar) <= -0.125)
             validacao_delimitacao_hipotenusa = (hipotenusa >= 0.4) and (hipotenusa <= 0.73)
-            validacao_proximidade_inicio_indicador_medio = ((dif_proximidade_inicio_indicador_medio >= 0.015) and (dif_proximidade_inicio_indicador_medio <= 0.023)) or ((((dif_proximidade_inicio_indicador_medio <= 0.015) and (dif_proximidade_inicio_indicador_medio >= 0)) and ((dif_proximidade_inicio_indicador_medio >= -0.023) and (dif_proximidade_inicio_indicador_medio <= 0 ))))
+            validacao_proximidade_inicio_indicador_medio = logica_calc_mao_direita or logica_calc_mao_esquerda
             
             # Criar validação da proximidade dos dedos indicadores e médio
             print(validacao_proximidade_inicio_indicador_medio, dif_proximidade_inicio_indicador_medio)
             
-            # Criar validação de o dedo médio e o dedo mínimo estarem abaixados
             
+            # Criar validação de o dedo médio e o dedo mínimo estarem abaixados
             #----------------------------------------
             
             if validacao_reta_polegar and validacao_delimitacao_hipotenusa:
