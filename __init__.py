@@ -154,7 +154,6 @@ class DeterminarGestos:
     def identificar(self):
         retorno_objeto_booleano_detectado = [v for k,v in self.logica_deteccao_movimento.items() if k]
         
-        # print(self.logica_deteccao_movimento)
         print(retorno_objeto_booleano_detectado)
         
         if retorno_objeto_booleano_detectado:
@@ -172,16 +171,16 @@ class Gestos:
     
     def Pinca(objeto_self_classe):
         # Calculos
-        #----------------------------------------
+        #----------------------------------------------------------------------------------------------------
         diferenca_eixoY_PDP = (objeto_self_classe.Y_ponta_indicador - objeto_self_classe.Y_ponta_polegar)
-        #----------------------------------------
+        #----------------------------------------------------------------------------------------------------
         
         # Validações de Prosseguimento
-        #----------------------------------------
+        #----------------------------------------------------------------------------------------------------
         validacao1:bool = (diferenca_eixoY_PDP > -0.05)
         validacao2:bool = (diferenca_eixoY_PDP < -0.007)
         validacao3:bool = ((objeto_self_classe.Y_ponta_medio*1.30) < objeto_self_classe.Y_ponta_indicador)
-        #----------------------------------------
+        #----------------------------------------------------------------------------------------------------
         
         if validacao1 and validacao2 and validacao3:
             return True
@@ -200,7 +199,7 @@ class Gestos:
         validacao_ponta_dedo_anelar_abaixo_inicio = (objeto_self_classe.Y_ponta_anelar >= objeto_self_classe.Y_inicio_anelar)
         validacao_ponta_dedo_minimo_abaixo_inicio = (objeto_self_classe.Y_ponta_minimo >= objeto_self_classe.Y_inicio_minimo)
         
-        validacao_delimitacao_hipotenusa = (hipotenusa >= 0.4) and (hipotenusa <= 0.70) or ((hipotenusa <= -0.4) and (hipotenusa >= -0.70))
+        validacao_delimitacao_hipotenusa = (hipotenusa >= 0.4) and (hipotenusa <= 0.70)
         validacao_reta_polegar =  (((distancia_dos_pontos_reta_polegar  <= 0.25) and (distancia_dos_pontos_reta_polegar  >= 0.13)))
         #----------------------------------------------------------------------------------------------------------------------------------------------------------------
         
