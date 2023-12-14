@@ -154,7 +154,7 @@ class DeterminarGestos:
     def identificar(self):
         retorno_objeto_booleano_detectado = [v for k,v in self.logica_deteccao_movimento.items() if k]
         
-        print(self.logica_deteccao_movimento)
+        # print(self.logica_deteccao_movimento)
         print(retorno_objeto_booleano_detectado)
         
         if retorno_objeto_booleano_detectado:
@@ -191,7 +191,6 @@ class Gestos:
         # Cálculos
         #----------------------------------------------------------------------------------------------------------------------------------------------------------------
         distancia_dos_pontos_reta_polegar = Gestos.DISTANCIA_EUCLIDIANA_X_Y(objeto_self_classe.X_inicio_polegar, objeto_self_classe.X_ponta_polegar, objeto_self_classe.Y_inicio_polegar, objeto_self_classe.Y_ponta_polegar)
-        distancia_dos_pontos_indicador_ponta = Gestos.DISTANCIA_EUCLIDIANA(objeto_self_classe.Y_inicio_indicador, objeto_self_classe.Y_ponta_indicador)
         hipotenusa = Gestos.TEOREMA_DE_PITAGORAS(objeto_self_classe.Y_ponta_indicador, objeto_self_classe.X_ponta_polegar)
         #----------------------------------------------------------------------------------------------------------------------------------------------------------------
         
@@ -202,12 +201,11 @@ class Gestos:
         validacao_ponta_dedo_minimo_abaixo_inicio = (objeto_self_classe.Y_ponta_minimo >= objeto_self_classe.Y_inicio_minimo)
         
         validacao_delimitacao_hipotenusa = (hipotenusa >= 0.4) and (hipotenusa <= 0.70) or ((hipotenusa <= -0.4) and (hipotenusa >= -0.70))
-        validacao_reta_polegar =  (((distancia_dos_pontos_reta_polegar  <= 0.25) and (distancia_dos_pontos_reta_polegar  >= 0.16)))
-        validacao_distancia_dos_pontos_indicador = distancia_dos_pontos_indicador_ponta >= 0.13
+        validacao_reta_polegar =  (((distancia_dos_pontos_reta_polegar  <= 0.25) and (distancia_dos_pontos_reta_polegar  >= 0.13)))
         #----------------------------------------------------------------------------------------------------------------------------------------------------------------
         
 
-        if validacao_ponta_dedo_indicador_e_medio_acima_inicio and validacao_distancia_dos_pontos_indicador and validacao_ponta_dedo_anelar_abaixo_inicio and validacao_ponta_dedo_minimo_abaixo_inicio and validacao_delimitacao_hipotenusa and validacao_reta_polegar:
+        if validacao_ponta_dedo_indicador_e_medio_acima_inicio and validacao_ponta_dedo_anelar_abaixo_inicio and validacao_ponta_dedo_minimo_abaixo_inicio and validacao_delimitacao_hipotenusa and validacao_reta_polegar:
             return True
     
         
