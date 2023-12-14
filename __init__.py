@@ -112,7 +112,7 @@ class DeterminarGestos:
         self.X_ponta_minimo, self.Y_ponta_minimo = self.eixo_ponta_minimo.values()
         #----------------------------------------------------------------------
         
-        # Dict's Auxiliares
+        # Gestão Dict's
         #------------------------------
         self.delimitar_gesto_funcao:dict = {
             'Pinça' : 'print("Retorno de Pinça")',
@@ -131,22 +131,13 @@ class DeterminarGestos:
         
         # Cálculo para Testes 
         #------------------------------
-        
         print(type(self.eixo_inicio_indicador))
         print(type(self.X_inicio_indicador))
         print(f'Polegar - Inicio: {self.eixo_inicio_polegar} - Ponta: {self.eixo_ponta_polegar}\n',
               f'Indicador - Inicio: {self.eixo_inicio_indicador} - Ponta: {self.eixo_ponta_indicador}\n',
               f'Médio - Inicio: {self.eixo_inicio_medio} - Ponta: {self.eixo_ponta_medio}\n',
               f'Anelar - Inicio: {self.eixo_inicio_anelar} - Ponta: {self.eixo_ponta_anelar}\n',
-              f'Minimo - Inicio: {self.eixo_inicio_minimo} - Ponta: {self.eixo_ponta_minimo}\n',
-        )
-
-
-        
-        print('Reta do polegar: ', (self.X_ponta_polegar - self.X_inicio_polegar), (((self.X_ponta_polegar - self.X_inicio_polegar)  <= 0.2) or ((self.X_ponta_polegar - self.X_inicio_polegar)  <= -0.2)) and (((self.X_ponta_polegar - self.X_inicio_polegar) >= 0.125) or (self.X_ponta_polegar - self.X_inicio_polegar) <= -0.125))
-        hipotenusa = math.sqrt((self.Y_ponta_indicador**2)+(self.X_ponta_polegar**2))
-        print('Hipotenusa: ', hipotenusa, (hipotenusa >= 0.4) and (hipotenusa <= 0.73))
-        # distancia entre dois pontos : srqt(ponto1 - ponto2)**2
+              f'Minimo - Inicio: {self.eixo_inicio_minimo} - Ponta: {self.eixo_ponta_minimo}\n')
         #------------------------------
         
         
@@ -172,57 +163,61 @@ class DeterminarGestos:
             
             
 class Gestos:
+    # Fórmulas
+    #--------------------------------------------------------------------------------
+    DISTANCIA_EUCLIDIANA_X_Y = lambda x1,x2,y1,y2: math.sqrt((x2-x1)**2 + (y2-y1)**2) # Distância entre dois pontos com dois eixos, X e Y
+    DISTANCIA_EUCLIDIANA = lambda x1,x2: math.sqrt((x2-x1)**2) # Distância entre dois pontos 
+    TEOREMA_DE_PITAGORAS = lambda a,b: math.sqrt(a**2 + b**2) # Teorema de Pitagoras
+    #--------------------------------------------------------------------------------
     
-        def Pinca(objeto_self_classe):
-            # Calculos e Lógicas
-            #----------------------------------------
-            diferenca_eixoY_PDP = (objeto_self_classe.Y_ponta_indicador - objeto_self_classe.Y_ponta_polegar)
-            #----------------------------------------
-            
-            # Validações de Prosseguimento
-            #----------------------------------------
-            validacao1:bool = (diferenca_eixoY_PDP > -0.05)
-            validacao2:bool = (diferenca_eixoY_PDP < -0.007)
-            validacao3:bool = ((objeto_self_classe.Y_ponta_medio*1.30) < objeto_self_classe.Y_ponta_indicador)
-            #----------------------------------------
-            
-            if validacao1 and validacao2 and validacao3:
-                return True
+    def Pinca(objeto_self_classe):
+        # Calculos
+        #----------------------------------------
+        diferenca_eixoY_PDP = (objeto_self_classe.Y_ponta_indicador - objeto_self_classe.Y_ponta_polegar)
+        #----------------------------------------
+        
+        # Validações de Prosseguimento
+        #----------------------------------------
+        validacao1:bool = (diferenca_eixoY_PDP > -0.05)
+        validacao2:bool = (diferenca_eixoY_PDP < -0.007)
+        validacao3:bool = ((objeto_self_classe.Y_ponta_medio*1.30) < objeto_self_classe.Y_ponta_indicador)
+        #----------------------------------------
+        
+        if validacao1 and validacao2 and validacao3:
+            return True
 
-            
-        def L(objeto_self_classe):
-            # Calculos e Lógicas
-            #----------------------------------------
-            hipotenusa = math.sqrt((objeto_self_classe.Y_ponta_indicador**2)+(objeto_self_classe.X_ponta_polegar**2))
-            dif_reta_polegar = (objeto_self_classe.X_ponta_polegar - objeto_self_classe.X_inicio_polegar)
-            dif_proximidade_inicio_indicador_medio = (objeto_self_classe.X_ponta_indicador - objeto_self_classe.X_ponta_medio)
-            logica_calc_mao_direita = ((dif_proximidade_inicio_indicador_medio >= 0.015) and (dif_proximidade_inicio_indicador_medio <= 0.023))
-            logica_calc_mao_esquerda = ((((dif_proximidade_inicio_indicador_medio <= 0.015) and (dif_proximidade_inicio_indicador_medio >= 0)) and ((dif_proximidade_inicio_indicador_medio >= -0.023) and (dif_proximidade_inicio_indicador_medio <= 0 ))))
-            #----------------------------------------
-            
-            # Validações de Prosseguimento
-            #----------------------------------------
-            validacao_reta_polegar = (((dif_reta_polegar)  <= 0.2) or ((dif_reta_polegar)  <= -0.2)) and (((dif_reta_polegar) >= 0.125) or (dif_reta_polegar) <= -0.125)
-            validacao_delimitacao_hipotenusa = (hipotenusa >= 0.4) and (hipotenusa <= 0.73)
-            validacao_proximidade_inicio_indicador_medio = logica_calc_mao_direita or logica_calc_mao_esquerda
-            
-            # Criar validação da proximidade dos dedos indicadores e médio
-            print(validacao_proximidade_inicio_indicador_medio, dif_proximidade_inicio_indicador_medio)
-            
-            
-            # Criar validação de o dedo médio e o dedo mínimo estarem abaixados
-            #----------------------------------------
-            
-            if validacao_reta_polegar and validacao_delimitacao_hipotenusa:
-                return True
         
-            
-        def V(objeto_self_classe):
-            ...
+    def L(objeto_self_classe):
+        # Cálculos
+        #----------------------------------------------------------------------------------------------------------------------------------------------------------------
+        distancia_dos_pontos_reta_polegar = Gestos.DISTANCIA_EUCLIDIANA_X_Y(objeto_self_classe.X_inicio_polegar, objeto_self_classe.X_ponta_polegar, objeto_self_classe.Y_inicio_polegar, objeto_self_classe.Y_ponta_polegar)
+        distancia_dos_pontos_indicador_ponta = Gestos.DISTANCIA_EUCLIDIANA(objeto_self_classe.Y_inicio_indicador, objeto_self_classe.Y_ponta_indicador)
+        hipotenusa = Gestos.TEOREMA_DE_PITAGORAS(objeto_self_classe.Y_ponta_indicador, objeto_self_classe.X_ponta_polegar)
+        #----------------------------------------------------------------------------------------------------------------------------------------------------------------
         
-        def II(objeto_self_classe):
-            #polegar abaixo do dedo indicador
-            ...
+        # Validações para Prosseguimento
+        #----------------------------------------------------------------------------------------------------------------------------------------------------------------
+        validacao_ponta_dedo_indicador_e_medio_acima_inicio = (objeto_self_classe.Y_ponta_indicador <= objeto_self_classe.Y_inicio_indicador and objeto_self_classe.Y_ponta_medio <= objeto_self_classe.Y_inicio_medio)
+        validacao_ponta_dedo_anelar_abaixo_inicio = (objeto_self_classe.Y_ponta_anelar >= objeto_self_classe.Y_inicio_anelar)
+        validacao_ponta_dedo_minimo_abaixo_inicio = (objeto_self_classe.Y_ponta_minimo >= objeto_self_classe.Y_inicio_minimo)
+        
+        validacao_delimitacao_hipotenusa = (hipotenusa >= 0.4) and (hipotenusa <= 0.70) or ((hipotenusa <= -0.4) and (hipotenusa >= -0.70))
+        validacao_reta_polegar =  (((distancia_dos_pontos_reta_polegar  <= 0.25) and (distancia_dos_pontos_reta_polegar  >= 0.16)))
+        validacao_distancia_dos_pontos_indicador = distancia_dos_pontos_indicador_ponta >= 0.13
+        #----------------------------------------------------------------------------------------------------------------------------------------------------------------
+        
+
+        if validacao_ponta_dedo_indicador_e_medio_acima_inicio and validacao_distancia_dos_pontos_indicador and validacao_ponta_dedo_anelar_abaixo_inicio and validacao_ponta_dedo_minimo_abaixo_inicio and validacao_delimitacao_hipotenusa and validacao_reta_polegar:
+            return True
+    
+        
+    def V(objeto_self_classe):
+        ...
+    
+    
+    def II(objeto_self_classe):
+        #polegar abaixo do dedo indicador
+        ...
             
 if __name__ == "__main__":
     def abrir_explorador_de_arquivos():
