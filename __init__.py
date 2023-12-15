@@ -141,8 +141,9 @@ class DeterminarGestos:
         #------------------------------
         
         
-    def aguarde_para_exito(self):
+    async def aguarde_para_êxito(self):
         ...
+        await asyncio.wait(1)
         
     
     def cooldown_entre_gestos(self):
@@ -159,6 +160,7 @@ class DeterminarGestos:
     def identificar(self):
         retorno_objeto_booleano_detectado = [v for k,v in self.logica_deteccao_movimento.items() if k]
         if retorno_objeto_booleano_detectado:
+            # asyncio.self.aguarde_para_êxito()
             eval(self.delimitar_gesto_funcao.get(retorno_objeto_booleano_detectado[0]))          
 
         print(retorno_objeto_booleano_detectado)
@@ -168,8 +170,8 @@ class DeterminarGestos:
 class Gestos:
     # Fórmulas
     #--------------------------------------------------------------------------------
-    DISTANCIA_EUCLIDIANA_X_Y_Z = lambda x1,x2,y1,y2,z1,z2: math.sqrt((x2-x1)**2 + (y2-y1)**2 + (z2-z1)**2) # Distância entre dois pontos com dois eixos, X, Y e Z
-    DISTANCIA_EUCLIDIANA = lambda x1,x2: math.sqrt((x2-x1)**2) # Distância entre dois pontos na mesma altura
+    FORMULA_DISTANCIA_ENTRE_DOIS_PONTOS_EUCLIDIANA_X_Y = lambda x1,x2,y1,y2,z1,z2: math.sqrt((x2-x1)**2 + (y2-y1)**2 + (z2-z1)**2) # Distância entre dois pontos com dois eixos, X, Y e Z
+    FORMULA_DISTANCIA_ENTRE_DOIS_PONTOS_EUCLIDIANA = lambda x1,x2: math.sqrt((x2-x1)**2) # Distância entre dois pontos 
     TEOREMA_DE_PITAGORAS = lambda a,b: math.sqrt(a**2 + b**2) # Teorema de Pitagoras
     #--------------------------------------------------------------------------------
     
@@ -193,9 +195,9 @@ class Gestos:
     def L(objeto_self_classe):
         # Cálculos
         #----------------------------------------------------------------------------------------------------------------------------------------------------------------
-        distancia_dos_pontos_reta_polegar = Gestos.DISTANCIA_EUCLIDIANA_X_Y_Z(objeto_self_classe.X_inicio_polegar, objeto_self_classe.X_ponta_polegar, 
-                                                                              objeto_self_classe.Y_inicio_polegar, objeto_self_classe.Y_ponta_polegar,
-                                                                              objeto_self_classe.Z_inicio_polegar, objeto_self_classe.Z_ponta_polegar)
+        distancia_dos_pontos_reta_polegar = Gestos.FORMULA_DISTANCIA_ENTRE_DOIS_PONTOS_EUCLIDIANA_X_Y(objeto_self_classe.X_inicio_polegar, objeto_self_classe.X_ponta_polegar, 
+                                                                                                      objeto_self_classe.Y_inicio_polegar, objeto_self_classe.Y_ponta_polegar,
+                                                                                                      objeto_self_classe.Z_inicio_polegar, objeto_self_classe.Z_ponta_polegar)
         
         hipotenusa = Gestos.TEOREMA_DE_PITAGORAS(objeto_self_classe.Y_ponta_indicador, objeto_self_classe.X_ponta_polegar)
         #----------------------------------------------------------------------------------------------------------------------------------------------------------------
