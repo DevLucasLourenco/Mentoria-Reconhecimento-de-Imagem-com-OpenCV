@@ -78,7 +78,7 @@ class DeteccaoVisual:
 class DeterminarGestos:
     
     def __init__(self,IDP, IDI, IDM, IDA, IDMI, PDP, PDI, PDM, PDA, PDMI) -> None:        
-        # Eixos -> {x:y}
+        # Eixos -> {k1:v1, k2:v2, k3:v3}
         #----------------------------------------------------------------------
         self.eixo_inicio_polegar:dict = self._tratar_obj_landmark(IDP)
         self.eixo_inicio_indicador:dict = self._tratar_obj_landmark(IDI)
@@ -95,21 +95,21 @@ class DeterminarGestos:
         self.eixo_ponta_minimo:dict = self._tratar_obj_landmark(PDMI)
         #----------------------------------------------------------------------
         
-        # Unpacking de X e Y dos Eixos
+        # Unpacking de X, Y e Z dos Eixos
         #----------------------------------------------------------------------
-        self.X_inicio_polegar, self.Y_inicio_polegar = self.eixo_inicio_polegar.values()
-        self.X_inicio_indicador, self.Y_inicio_indicador = self.eixo_inicio_indicador.values()
-        self.X_inicio_medio, self.Y_inicio_medio = self.eixo_inicio_medio.values()
-        self.X_inicio_anelar, self.Y_inicio_anelar = self.eixo_inicio_anelar.values()
-        self.X_inicio_minimo, self.Y_inicio_minimo = self.eixo_inicio_minimo.values()
+        self.X_inicio_polegar, self.Y_inicio_polegar, self.Z_inicio_polegar = self.eixo_inicio_polegar.values()
+        self.X_inicio_indicador, self.Y_inicio_indicador, self.Z_inicio_indicador = self.eixo_inicio_indicador.values()
+        self.X_inicio_medio, self.Y_inicio_medio, self.Z_inicio_medio = self.eixo_inicio_medio.values()
+        self.X_inicio_anelar, self.Y_inicio_anelar, self.Z_inicio_anelar = self.eixo_inicio_anelar.values()
+        self.X_inicio_minimo, self.Y_inicio_minimo, self.Z_inicio_minimo = self.eixo_inicio_minimo.values()
         
         #-----
         
-        self.X_ponta_polegar, self.Y_ponta_polegar = self.eixo_ponta_polegar.values()
-        self.X_ponta_indicador, self.Y_ponta_indicador = self.eixo_ponta_indicador.values()
-        self.X_ponta_medio, self.Y_ponta_medio = self.eixo_ponta_medio.values()
-        self.X_ponta_anelar, self.Y_ponta_anelar = self.eixo_ponta_anelar.values()
-        self.X_ponta_minimo, self.Y_ponta_minimo = self.eixo_ponta_minimo.values()
+        self.X_ponta_polegar, self.Y_ponta_polegar, self.Z_ponta_polegar = self.eixo_ponta_polegar.values()
+        self.X_ponta_indicador, self.Y_ponta_indicador, self.Z_ponta_indicador = self.eixo_ponta_indicador.values()
+        self.X_ponta_medio, self.Y_ponta_medio, self.Z_ponta_medio = self.eixo_ponta_medio.values()
+        self.X_ponta_anelar, self.Y_ponta_anelar, self.Z_ponta_anelar = self.eixo_ponta_anelar.values()
+        self.X_ponta_minimo, self.Y_ponta_minimo , self.Z_ponta_minimo = self.eixo_ponta_minimo.values()
         #----------------------------------------------------------------------
         
         # Gestão Dict's
@@ -129,7 +129,7 @@ class DeterminarGestos:
             }
         #------------------------------
         
-        # Cálculo para Testes 
+        # Cálculo para Testes
         #------------------------------
         print(type(self.eixo_inicio_indicador))
         print(type(self.X_inicio_indicador))
@@ -141,31 +141,35 @@ class DeterminarGestos:
         #------------------------------
         
         
-    def aguarde_para_êxito(self):
+    def aguarde_para_exito(self):
+        ...
+        
+    
+    def cooldown_entre_gestos(self):
         ...
 
 
-    def _tratar_obj_landmark(self, obj):
+    def _tratar_obj_landmark(self, obj) -> dict[str|float]:
         obj_tratado = str(obj).split('\n')
-        obj_tratado = [obj_eixo.split(': ') for obj_eixo in obj_tratado][:2]
-        return {k:float(v) for k,v in obj_tratado}
+        obj_tratado = [obj_eixo.split(': ') for obj_eixo in obj_tratado][:3]
+        print(obj_tratado)
+        return {k.title():float(v) for k,v in obj_tratado}
     
     
     def identificar(self):
         retorno_objeto_booleano_detectado = [v for k,v in self.logica_deteccao_movimento.items() if k]
-        
-        print(retorno_objeto_booleano_detectado)
-        
         if retorno_objeto_booleano_detectado:
             eval(self.delimitar_gesto_funcao.get(retorno_objeto_booleano_detectado[0]))          
 
+        print(retorno_objeto_booleano_detectado)
+            
             
             
 class Gestos:
     # Fórmulas
     #--------------------------------------------------------------------------------
-    DISTANCIA_EUCLIDIANA_X_Y = lambda x1,x2,y1,y2: math.sqrt((x2-x1)**2 + (y2-y1)**2) # Distância entre dois pontos com dois eixos, X e Y
-    DISTANCIA_EUCLIDIANA = lambda x1,x2: math.sqrt((x2-x1)**2) # Distância entre dois pontos 
+    DISTANCIA_EUCLIDIANA_X_Y_Z = lambda x1,x2,y1,y2,z1,z2: math.sqrt((x2-x1)**2 + (y2-y1)**2 + (z2-z1)**2) # Distância entre dois pontos com dois eixos, X, Y e Z
+    DISTANCIA_EUCLIDIANA = lambda x1,x2: math.sqrt((x2-x1)**2) # Distância entre dois pontos na mesma altura
     TEOREMA_DE_PITAGORAS = lambda a,b: math.sqrt(a**2 + b**2) # Teorema de Pitagoras
     #--------------------------------------------------------------------------------
     
@@ -189,7 +193,10 @@ class Gestos:
     def L(objeto_self_classe):
         # Cálculos
         #----------------------------------------------------------------------------------------------------------------------------------------------------------------
-        distancia_dos_pontos_reta_polegar = Gestos.DISTANCIA_EUCLIDIANA_X_Y(objeto_self_classe.X_inicio_polegar, objeto_self_classe.X_ponta_polegar, objeto_self_classe.Y_inicio_polegar, objeto_self_classe.Y_ponta_polegar)
+        distancia_dos_pontos_reta_polegar = Gestos.DISTANCIA_EUCLIDIANA_X_Y_Z(objeto_self_classe.X_inicio_polegar, objeto_self_classe.X_ponta_polegar, 
+                                                                              objeto_self_classe.Y_inicio_polegar, objeto_self_classe.Y_ponta_polegar,
+                                                                              objeto_self_classe.Z_inicio_polegar, objeto_self_classe.Z_ponta_polegar)
+        
         hipotenusa = Gestos.TEOREMA_DE_PITAGORAS(objeto_self_classe.Y_ponta_indicador, objeto_self_classe.X_ponta_polegar)
         #----------------------------------------------------------------------------------------------------------------------------------------------------------------
         
@@ -203,6 +210,8 @@ class Gestos:
         validacao_reta_polegar =  (((distancia_dos_pontos_reta_polegar  <= 0.25) and (distancia_dos_pontos_reta_polegar  >= 0.13)))
         #----------------------------------------------------------------------------------------------------------------------------------------------------------------
         
+        print(f'Distância Euclidiana: {distancia_dos_pontos_reta_polegar}')
+        print(f'Hipotenusa: {hipotenusa}')
 
         if validacao_ponta_dedo_indicador_e_medio_acima_inicio and validacao_ponta_dedo_anelar_abaixo_inicio and validacao_ponta_dedo_minimo_abaixo_inicio and validacao_delimitacao_hipotenusa and validacao_reta_polegar:
             return True
