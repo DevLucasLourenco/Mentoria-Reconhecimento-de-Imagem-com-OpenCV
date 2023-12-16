@@ -77,15 +77,22 @@ class DeteccaoVisual:
 
 class DeterminarGestos:
     
-    def __init__(self,IDP, IDI, IDM, IDA, IDMI, PDP, PDI, PDM, PDA, PDMI) -> None:        
+    def __init__(self,IDP, IDI, IDM, IDA, IDMI, PDP, PDI, PDM, PDA, PDMI) -> None:
+        # ID = Inicio do Dedo | PD = Ponta do Dedo
+        # ↑ + {P|I|M|A|MI} —> {Polegar|Indicador|Médio|Anelar|Minimo} - Ex.: IDP —> Inicio do Polegar
+        
         # Eixos -> {k1:v1, k2:v2, k3:v3}
         #----------------------------------------------------------------------
+        # Inicio do...
+        #-----
+        
         self.eixo_inicio_polegar:dict = self._tratar_obj_landmark(IDP)
         self.eixo_inicio_indicador:dict = self._tratar_obj_landmark(IDI)
         self.eixo_inicio_medio:dict = self._tratar_obj_landmark(IDM)
         self.eixo_inicio_anelar:dict = self._tratar_obj_landmark(IDA)
         self.eixo_inicio_minimo:dict = self._tratar_obj_landmark(IDMI)
         
+        # Ponta do...
         #-----
 
         self.eixo_ponta_polegar:dict = self._tratar_obj_landmark(PDP)
@@ -141,7 +148,7 @@ class DeterminarGestos:
         #------------------------------
         
         
-    async def aguarde_para_êxito(self):
+    async def aguarde_para_exito(self):
         ...
         await asyncio.wait(1)
         
@@ -160,7 +167,7 @@ class DeterminarGestos:
     def identificar(self):
         retorno_objeto_booleano_detectado = [v for k,v in self.logica_deteccao_movimento.items() if k]
         if retorno_objeto_booleano_detectado:
-            # asyncio.self.aguarde_para_êxito()
+            # asyncio.self.aguarde_para_exito()
             eval(self.delimitar_gesto_funcao.get(retorno_objeto_booleano_detectado[0]))          
 
         print(retorno_objeto_booleano_detectado)
